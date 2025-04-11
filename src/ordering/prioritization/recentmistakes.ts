@@ -10,6 +10,14 @@ function newRecentMistakesFirstSorter (): CardOrganizer {
    * @param cardStatus The {@link CardStatus} object with failing
    * @return The most recent incorrect response time stamp
    */
+  function mostRecentMistake (cardStatus: CardStatus): boolean {
+    const results = cardStatus.getResults()
+    if (results.length === 0) {
+      return false
+    }
+    return results[results.length - 1]
+  }
+
   return {
     /**
      * Orders the cards by the time of most recent incorrect answers provided for them.
@@ -18,7 +26,11 @@ function newRecentMistakesFirstSorter (): CardOrganizer {
      * @return The ordered cards.
      */
     reorganize: function (cards: CardStatus[]): CardStatus[] {
-      return []
+      const c = cards.slice()
+      c.sort((a, b) =>
+        mostRecentMistake(a) > mostRecentMistake(b) ? 1 : (mostRecentMistake(a) < mostRecentMistake(b) ? -1 : 0)
+      )
+      return c
     }
   }
 };
